@@ -1,0 +1,54 @@
+{%extends 'base.html'%}
+{%load static%}
+{%block content%}
+
+
+<!-- ========================= SECTION MAIN ========================= -->
+<section class="section-intro padding-y-sm">
+<div class="container">
+
+<div class="intro-banner-wrap">
+    <img src="{% static 'images/banners/cover.jpg' %}" class="img-fluid rounded" alt="Banner showing the main theme of the store with a welcoming atmosphere">
+</div>
+
+</div> <!-- container //  -->
+</section>
+<!-- ========================= SECTION MAIN END// ========================= -->
+
+<!-- ========================= SECTION  ========================= -->
+<section class="section-name padding-y">
+<div class="container">
+    <header class="section-heading py-4">
+        <a href="{% url 'store' %}" class="btn btn-outline-primary float-right">See all</a>
+        <h3 class="section-title">Popular products</h3>
+    </header>
+
+    <div class="row">
+        {% for product in products %}
+        <div class="col-md-4 col-sm-6 mb-4">
+            <div class="card card-product-grid h-100">
+                <a href="{{ product.get_url }}" class="img-wrap p-3"> 
+                    <img src="{{ product.images.url }}" class="img-fluid"> 
+                </a>
+                <figcaption class="info-wrap p-4">
+                    <a href="{{ product.get_url }}" class="title mb-2 d-block">{{product.product_name}}</a>
+                    <div class="price mt-2">${{product.price}}</div>
+                </figcaption>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+</section>
+<!-- ========================= SECTION  END// ========================= -->
+
+
+
+
+<!-- ========================= FOOTER ========================= -->
+
+<!-- ========================= FOOTER END // ========================= -->
+
+</body>
+</html>
+{%endblock%}
