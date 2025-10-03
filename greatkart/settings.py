@@ -130,7 +130,21 @@ STATICFILES_DIRS = [BASE_DIR / 'greatkart/static',]
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
+# Message Tags
+from django.contrib.messages import constants as messages
+
+MESSAGE_TAGS = {
+    messages.ERROR: "danger",
+}
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#Email Backend SMTP CONFIGURATION
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587# port for GMAIL SMTP server
+EMAIL_HOST_USER = 'chiku5670@gmail.com'
+EMAIL_HOST_PASSWORD = 'vijx migh jbvg okem'
+EMAIL_USE_TLS = True
