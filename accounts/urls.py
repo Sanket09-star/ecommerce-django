@@ -5,5 +5,11 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('', views.dashboard, name='dashboard'),
+
     path('activate/<uidb64>/<token>/', views.activate, name='activate'), # user activation link
-]
+    path('forgotPassword/', views.forgotPassword, name='forgotPassword'),# forgot password
+    path('resetpassword_validate/<uidb64>/<token>/', views.resetpassword_validate, name='resetpassword_validate'),# reset password validate
+    path('resetPassword/', views.resetPassword, name='resetPassword'),# reset password
+]  
