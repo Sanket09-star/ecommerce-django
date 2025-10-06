@@ -12,6 +12,9 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
 from django.core.mail import EmailMessage
 from django.contrib.auth.tokens import default_token_generator
+
+from carts.models import Cart, CartItem
+from carts.views import _cart_id
 # Create your views here.
 def register(request):
     if request.method == 'POST':
@@ -58,6 +61,16 @@ def login(request):
 
         user = auth.authenticate(request, email=email, password=password)
         if user is not None:
+            try:
+                cart = Cart.objects.get(cart_id=_cart_id(request)) #get the cart using the card_id present in the session
+                is_cart_item_exists = CartItem.objects.filter(cart=cart).exists()
+                if is_cart_item_exists:
+                    cart_item = CartItem.objects.filter(cart=cart)
+                    for item in cart_item:
+                        item.user = user #assign the user to the cart item
+                        item.save()
+            except:
+                pass
             auth.login(request, user)
             messages.success(request, 'You are now logged in.')
             return redirect('dashboard')

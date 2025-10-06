@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<section class="section-content padding-y bg">
+<div class="container">
+
+<!-- ============================ COMPONENT 1 ================================= -->
+<div class="row">
+	<aside class="col-lg-6">
+<div class="card">
+<div class="card-body">
+    <h4 class="card-title mb-4">Billing Address</h4>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="col form-group">
+                <label for="">First Name</label>
+                <input type="text" class="form-control" id="first_name" placeholder="Enter first name" required>
+            </div>
+            <div class="col form-group">
+                <label for="">Last Name</label>
+                <input type="text" class="form-control" id="last_name" placeholder="Enter last name" required>
+            </div>
+        </div> 
+        <div class="form-row">
+            <div class="col form-group">
+                <label for="">Email</label>
+                <input type="email" class="form-control" id="email" placeholder="Enter email" required>
+            </div>
+            <div class="col form-group">
+                <label for="">Phone Number</label>
+                <input type="text" class="form-control" id="phone_number" placeholder="Enter phone number" required>
+            </div>
+        </div> 
+        <div class="form-row">
+            <div class="col form-group">
+                <label for="">Address Line 1</label>
+                <input type="text" class="form-control" id="address_line_1" placeholder="Enter address line 1" required>
+            </div>
+            <div class="col form-group">
+                <label for="">Address Line 2</label>
+                <input type="text" class="form-control" id="address_line_2" placeholder="Enter address line 2">
+            </div>
+        </div> 
+        <div class="form-row">
+            <div class="col form-group">
+                <label for="">City</label>
+                <input type="text" class="form-control" id="city" placeholder="Enter city" required>
+            </div>
+            <div class="col form-group">
+                <label for="">State</label>
+                <input type="text" class="form-control" id="state" placeholder="Enter state" required>
+            </div>
+        </div> 
+        <div class="form-row">
+            <div class="col form-group">
+                <label for="">Country</label>
+                <input type="text" class="form-control" id="country" placeholder="Enter country" required>
+            </div>
+            <div class="col form-group">
+                <label for="">Order Note</label>
+                <textarea type="text" class="form-control" id="order_note" placeholder="Enter order note" rows="2"></textarea>
+            </div>k 
+        </div> 
+    
+</div>
+</div> <!-- card.// -->
+
+	</aside> <!-- col.// -->
+	<aside class="col-lg-6">
+
+		<div class="card">
+		<div class="card-body">
+			<table class="table table-borderless table-shopping-cart">
+<thead class="text-muted">
+<tr class="small text-uppercase">
+  <th scope="col">Product</th>
+  <th scope="col" width="120">Quantity</th>
+  <th scope="col" width="120">Price</th>
+</tr>
+</thead>
+<tbody>
+{% for cart_item in cart_items %}
+<tr>
+	<td>
+		<figure class="itemside align-items-center">
+			<div class="aside"><img src="{{cart_item.product.images.url}}" class="img-sm"></div>
+			<figcaption class="info">
+				<a href="{{ cart_item.product.get_url  }}" class="title text-dark">{{cart_item.product.name}}</a>
+				<p class="text-muted small">
+					{% if cart_item.variations.all %}
+						{% for item in cart_item.variations.all %}
+							{{ item.variation_category | capfirst }} : {{ item.variation_value | capfirst }}<br>
+						{% endfor %}
+					{% endif %}
+				</p>
+			</figcaption>
+		</figure>
+	</td>
+	<td> 
+        <label for="">{{cart_item.quantity}}</label>
+	</td>
+	<td> 
+		<div class="price-wrap"> 
+			<var class="price">${{cart_item.sub_total}}</var> 
+			<small class="text-muted"> ${{cart_item.product.price}} each </small> 
+		</div> <!-- price-wrap .// -->
+	</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+            <button type="submit" class="btn btn-primary btn-block"> Place Order </button>
+			<a href="{% url 'store' %}" class="btn btn-light btn-block">Continue Shopping</a>
+</form> 
+		</div> <!-- card-body.// -->
+		</div> <!-- card.// -->
+
+</aside> <!-- col.// -->
+
+
+</div> <!-- row.// -->
+<!-- ============================ COMPONENT 1 END .// ================================= -->
+
+</div> <!-- container .//  -->
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+
+{% endblock %}
