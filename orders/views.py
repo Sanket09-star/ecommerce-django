@@ -1,13 +1,29 @@
+import json
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
 
 from carts.models import CartItem
 from orders.forms import OrderForm
-from orders.models import Order
+from orders.models import Order, Payment
 import datetime
 # Create your views here.
 
 def payments(request):
+    body = json.loads(request.body) #load the json data from the request body
+    order = Order.objects.get(user = request.user, is_ordered = False, order_number = body['orderId'])
+    #Store transaction details inside payment table
+    payment = Payment(
+        user = request.user,
+        payment_id = body['transactionId'],
+        payment_method = body['payment_method'],
+        amount_paid = order.order_total,
+        status = body['status'],
+        created_at = datetime.datetime.now()
+    )
+    payment.save()
+    order.payment = payment
+    order.is_ordered = True
+    order.save()
     return render(request, 'orders/payments.html')
 
 
@@ -25,7 +41,7 @@ def place_order(request, total=0, quantity=0):
     grand_total = 0
     tax = 0
     for cart_item in cart_items:
-        total = (cart_item.product.price * cart_item.quantity)
+        total += (cart_item.product.price * cart_item.quantity)
         quantity += cart_item.quantity
     tax = (2 * total)/100
     grand_total = total + tax
@@ -62,7 +78,15 @@ def place_order(request, total=0, quantity=0):
             data.order_number = order_number
             data.save()
 
-            return redirect('checkout')
+            order = Order.objects.get(user = current_user, is_ordered = False, order_number = order_number)
+            context = {
+                'order':order,
+                'cart_items':cart_items,
+                'total':total,
+                'tax':tax,
+                'grand_total':grand_total,
+            }
+            return render(request, 'orders/payments.html', context) 
         else:
             return HttpResponse("Form is invalid")
 
