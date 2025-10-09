@@ -120,7 +120,7 @@
 <!-- PaypalScript -->
 <script>
 // CSRF token function to get token from cookie
-	function getCookie(name) {
+	function getCookie(name) { // source: https://docs.djangoproject.com/en/3.2/ref/csrf/#ajax
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
@@ -136,14 +136,15 @@
     return cookieValue;
 }
 
-	amount = '{{ grand_total }}';
+	amount = '{{ grand_total }}'; // from view context
 	var url = "{% url 'payments' %}";
 	var csrftoken = getCookie('csrftoken');
-	var orderId = '{{order.order_number}}'; 
+	var orderId = '{{order.order_number}}'; // from view context
 	var payment_method = 'PayPal';
 
 	// Render the PayPal button into #paypal-button-container
-	paypal.Buttons({
+	paypal.Buttons({ //source: https://developer.paypal.com/docs/checkout/integrate/
+	    // Set up the style of the button
 
 		style: {
 	      Height:40,
@@ -166,9 +167,9 @@
 	      return actions.order.capture().then(function(details) {
 	        // Show a success message to the buyer
 			console.log(details);
-			sendData();
+			sendData(); 
 			//alert('Transaction completed by ' + details.payer.name.given_name + '!');
-	        function sendData(){
+	        function sendData(){ //source: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch
 				fetch(url,{
 					method :'POST',
 					headers:{
@@ -177,7 +178,7 @@
 					},
 					body:JSON.stringify({
 						orderId: orderId,
-						transactionId: details.id,
+						transactionId: details.id,// from line number 169
 						payment_method: payment_method,
 						status: details.status,
 					})
