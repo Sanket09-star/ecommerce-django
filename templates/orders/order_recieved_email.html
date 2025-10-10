@@ -1,0 +1,10 @@
+{% autoescape off %}
+Hi {{ user.first_name }},
+
+Your order has been received and is now being processed. Your order details are as follows:
+
+Order Number: {{order.order_number}}
+
+Thank you for your order!
+The GreatKart Team
+{% endautoescape %}
