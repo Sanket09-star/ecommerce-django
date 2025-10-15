@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'store',
     'carts',
     'orders',
+    #'admin_honeypot', to user admin_honeypot need django version 2 or 3 , new version of django 5.2.5 not support admin_honeypot
 ]
 
 MIDDLEWARE = [
