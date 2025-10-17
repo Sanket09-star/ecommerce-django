@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 from decouple import config
+import os
+from dotenv import load_dotenv
+from urllib.parse import urlparse, parse_qsl
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +31,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['*.vercel.app']
+ALLOWED_HOSTS = ['*.vercel.app', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -98,17 +103,21 @@ AUTH_USER_MODEL = 'accounts.Account'
 #   }
 #}
 
+# Add these at the top of your settings.py
 
-import os
-import dj_database_url
-
+# This is the new configuration. 
+tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
 
 DATABASES = {
-    'default': dj_database_url.config(
-        # Get the database URL from the environment variable we will set in Vercel
-        default=os.environ.get('DATABASE_URL'),
-        conn_max_age=600 # Optional: Keeps connections alive for 10 minutes
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': tmpPostgres.path.replace('/', ''),  # Extract database name
+        'USER': tmpPostgres.username,              # Extract username
+        'PASSWORD': tmpPostgres.password,          # Extract password
+        'HOST': tmpPostgres.hostname,              # Extract host
+        'PORT': 5432,                              # Default PostgreSQL port
+        'OPTIONS': dict(parse_qsl(tmpPostgres.query)),  # Parse additional options
+    }
 }
 
 
