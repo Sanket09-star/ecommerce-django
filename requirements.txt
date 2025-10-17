@@ -1,12 +1,15 @@
 asgiref==3.9.1
 certifi==2025.10.5
 charset-normalizer==3.4.3
+dj-database-url==3.0.1
 Django==5.2.5
 django-admin-honeypot==1.1.0
 django-admin-thumbnails==0.2.9
 django-session-timeout==0.1.0
 idna==3.10
 pillow==11.3.0
+psycopg==3.2.10
+psycopg-binary==3.2.10
 python-decouple==3.8
 requests==2.32.5
 six==1.17.0

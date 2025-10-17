@@ -11,8 +11,17 @@
     ],
     "routes": [
         {
-            "src": "/(.*)",
+            "src": "/static/(.*)",
             "dest": "greatkart/wsgi.py"
         }
-    ]
+    ],
+    "build": {
+    "env": {
+      "DJANGO_SETTINGS_MODULE": "greatkart.settings"
+    }
+  },
+  "commands": {
+    "prebuild": "pip install -r requirements.txt",
+    "build": "python manage.py collectstatic --noinput && python manage.py migrate"
+  }
 }
