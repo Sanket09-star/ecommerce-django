@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 from decouple import config
 import dj_database_url
+import psycopg2
+from dotenv import load_dotenv
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -108,7 +110,7 @@ AUTH_USER_MODEL = 'accounts.Account'
 #}
 # PostgreSQL connection from environment variable
 DATABASES = {
-    'default': dj_database_url.config(default=config('DATABASE_URL'))
+    'default': dj_database_url.config(default=config('DATABASE_URL'), conn_max_age=600, ssl_require=True)
 }
 
 
