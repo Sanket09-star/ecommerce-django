@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 from decouple import config
+import dj_database_url
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +28,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=True, cast=bool)
 
-ALLOWED_HOSTS = ['']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -55,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_session_timeout.middleware.SessionTimeoutMiddleware', # Session timeout middleware
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 # Session timeout configuration
 SESSION_EXPIRE_SECONDS = 3600  # 1 hour session timeout
@@ -89,18 +92,25 @@ AUTH_USER_MODEL = 'accounts.Account'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
+#DATABASES = {
+   # 'default': {
+        #dbsql
         #'ENGINE': 'django.db.backends.sqlite3',
         #'NAME': BASE_DIR / 'db.sqlite3',
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "myshopdb",
-        "USER": "myshopuser",
-        "PASSWORD": "myshopuser@123",
-        "HOST": "127.0.0.1",
-        "PORT": "5432",
-    }
+        #"ENGINE": "django.db.backends.postgresql",
+        #"NAME": "myshopdb",
+        #"USER": "myshopuser",
+        #"PASSWORD": "myshopuser@123",
+        #"HOST": "127.0.0.1",
+        #"PORT": "5432",
+        
+  #  }
+#}
+# PostgreSQL connection from environment variable
+DATABASES = {
+    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
 }
+
 
 
 # Password validation
