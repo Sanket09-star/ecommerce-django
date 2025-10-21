@@ -61,6 +61,8 @@ MIDDLEWARE = [
     'django_session_timeout.middleware.SessionTimeoutMiddleware', # Session timeout middleware
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
+
+
 # Session timeout configuration
 SESSION_EXPIRE_SECONDS = 3600  # 1 hour session timeout
 SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
@@ -149,9 +151,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR /'static'
-STATICFILES_DIRS = [BASE_DIR / 'greatkart/static',]
+# WhiteNoise configuration
+# Use WhiteNoise to efficiently serve static files in production without relying on an external server.
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'static'
+STATICFILES_DIRS = [BASE_DIR / 'greatkart/static']
 
 #mdia files configuration
 MEDIA_URL = '/media/'
