@@ -108,7 +108,7 @@ AUTH_USER_MODEL = 'accounts.Account'
 #}
 # PostgreSQL connection from environment variable
 DATABASES = {
-    'default': dj_database_url.parse(f"{config('DATABASE_URL')}")
+    'default': dj_database_url.config(default=config('DATABASE_URL'))
 }
 
 
