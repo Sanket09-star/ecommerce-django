@@ -9,7 +9,9 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-#version 1.0.0
+#version 1.0.1
+
+
 from pathlib import Path
 from decouple import config
 import dj_database_url
