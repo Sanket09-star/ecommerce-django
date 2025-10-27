@@ -52,6 +52,13 @@ INSTALLED_APPS = [
     'carts',
     'orders',
     #'admin_honeypot', to user admin_honeypot need django version 2 or 3 , new version of django 5.2.5 not support admin_honeypot
+
+    # Allauth
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
 
 MIDDLEWARE = [
@@ -93,6 +100,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'greatkart.wsgi.application'
+
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 AUTH_USER_MODEL = 'accounts.Account'
 
@@ -190,3 +204,24 @@ EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
 SUPABASE_URL = config('SUPABASE_URL')
 SUPABASE_KEY = config('SUPABASE_KEY')
 supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+
+SITE_ID = 1
+
+# Allauth Configuration
+LOGIN_REDIRECT_URL = '/dashboard/' # Redirect to dashboard after login
+LOGOUT_REDIRECT_URL = '/accounts/login/' # Redirect to login page after logout
+ACCOUNT_EMAIL_VERIFICATION = 'none' # No email verification for social accounts
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        # For each OAuth based provider, either add a ``SocialApp``
+        # (``socialaccount`` app) containing the required client
+        # credentials, or list them here:
+        'APP': {
+            'client_id': config('GOOGLE_CLIENT_ID'),
+            'secret': config('GOOGLE_CLIENT_SECRET'),
+            'key': ''
+        }
+    }
+}
