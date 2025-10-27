@@ -68,6 +68,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_session_timeout.middleware.SessionTimeoutMiddleware', # Session timeout middleware
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -203,7 +204,7 @@ EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
 #Supabase Configuration for User Profile Picture Storage
 SUPABASE_URL = config('SUPABASE_URL')
 SUPABASE_KEY = config('SUPABASE_KEY')
-supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
+SUPABASE_CLIENT = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
 SITE_ID = 1

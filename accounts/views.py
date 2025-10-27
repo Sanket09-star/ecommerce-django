@@ -1,8 +1,8 @@
 from django.contrib import messages, auth
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.conf import settings # Import settings to access SUPABASE_CLIENT
 from django.contrib.auth.decorators import login_required
-import supabase
 from accounts.forms import RegistrationForm, UserForm, UserProfileForm
 from accounts.models import Account, UserProfile
 
@@ -226,22 +226,6 @@ def my_orders(request):
     return render(request, 'accounts/my_orders.html', context)
 
 
-
-@login_required(login_url='login')
-def save(request, *args, **kwargs):
-    super().save(*args,**kwargs)
-    if request.user.userprofile.picture:
-        file_path = request.user.userprofile.picture.url
-        request.user.userprofile.profile_pic_url = file_path
-
-        with open(file_path, "rb") as f:
-            supabase.storage.from_('userprofile').upload(file=f, path=file_path, file_options={'content-type': 'image/jpeg'},)
-
-        #generate public url for the image
-        public_url = supabase.storage.from_('userprofile').get_public_url(file_path)
-        request.user.userprofile.profile_pic_url = public_url
-        request.user.userprofile.save(update_fields=['profile_pic_url'])
-
 @login_required(login_url='login')
 def edit_profile(request): # this function is for editing user profile
     userprofile = get_object_or_404(UserProfile, user=request.user)
@@ -249,9 +233,22 @@ def edit_profile(request): # this function is for editing user profile
         user_form = UserForm(request.POST, instance=request.user)
         profile_form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
         if user_form.is_valid() and profile_form.is_valid():
-            save(request)
             user_form.save()
             profile_form.save()
+            # Handle the profile picture upload to Supabase
+            profile = profile_form.save(commit=False)
+            if 'profile_picture' in request.FILES:
+                uploaded_file = request.FILES['profile_picture']
+                # Define a unique path for the file in Supabase storage
+                file_path = f"userprofile/{request.user.id}/{uploaded_file.name}"
+                
+                # Upload the file content directly
+                settings.SUPABASE_CLIENT.storage.from_('userprofile').upload(file=uploaded_file.read(), path=file_path, file_options={'content-type': uploaded_file.content_type, 'upsert': 'true'})
+                
+                # Get the public URL and save it to the model
+                public_url = settings.SUPABASE_CLIENT.storage.from_('userprofile').get_public_url(file_path)
+                profile.profile_pic_url = public_url
+            profile.save()
             messages.success(request, 'Your profile has been updated.')
             return redirect('edit_profile')
     else:
