@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+import supabase
 
 # Create your models here.
 #this is for super admin
@@ -80,11 +81,12 @@ class UserProfile(models.Model):
     address_line_1 = models.CharField(blank=True, max_length=100)
     address_line_2 = models.CharField(blank=True, max_length=100)
     profile_picture = models.ImageField(blank=True, upload_to='userprofile')
+    profile_pic_url = models.URLField(blank=True, max_length=200)
     city = models.CharField(blank=True, max_length=20)
     state = models.CharField(blank=True, max_length=20)
     country = models.CharField(blank=True, max_length=20)
 
-
+            
     def __str__(self):
         return self.user.first_name
     

@@ -18,6 +18,8 @@ import dj_database_url
 import psycopg2
 from dotenv import load_dotenv
 import os
+from supabase import create_client, Client
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -182,3 +184,9 @@ EMAIL_PORT = config('EMAIL_PORT', cast=int)# port for GMAIL SMTP server
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
+
+
+#Supabase Configuration for User Profile Picture Storage
+SUPABASE_URL = config('SUPABASE_URL')
+SUPABASE_KEY = config('SUPABASE_KEY')
+supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)

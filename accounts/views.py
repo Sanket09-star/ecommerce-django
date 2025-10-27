@@ -2,6 +2,7 @@ from django.contrib import messages, auth
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.contrib.auth.decorators import login_required
+import supabase
 from accounts.forms import RegistrationForm, UserForm, UserProfileForm
 from accounts.models import Account, UserProfile
 
@@ -117,7 +118,11 @@ def login(request):
             except:
                 return redirect('dashboard')
         else:
-            messages.error(request, 'Invalid login credentials')
+            # The 'command' check is for the now-removed email verification flow.
+            if 'command' in request.GET and request.GET['command'] == 'verification':
+                 messages.success(request, 'Thank you for registering with us. We have sent you a verification email to your email address. Please verify to activate your account.')
+            else:
+                messages.error(request, 'Invalid login credentials')
             return redirect('login')
     return render(request, 'accounts/login.html')
 
@@ -147,7 +152,7 @@ def activate(request, uidb64, token): # This function will be called when user c
 def dashboard(request):
     orders = Order.objects.order_by('-created_at').filter(user_id = request.user.id, is_ordered=True)
     orders_count = orders.count()
-    userprofile = UserProfile.objects.get(user_id=request.user.id)
+    userprofile = UserProfile.objects.get_or_create(user_id=request.user.id)
     context = {
         'orders_count': orders_count,
         'userprofile': userprofile,
@@ -221,6 +226,22 @@ def my_orders(request):
     return render(request, 'accounts/my_orders.html', context)
 
 
+
+@login_required(login_url='login')
+def save(request, *args, **kwargs):
+    super().save(*args,**kwargs)
+    if request.user.userprofile.picture:
+        file_path = request.user.userprofile.picture.url
+        request.user.userprofile.profile_pic_url = file_path
+
+        with open(file_path, "rb") as f:
+            supabase.storage.from_('userprofile').upload(file=f, path=file_path, file_options={'content-type': 'image/jpeg'},)
+
+        #generate public url for the image
+        public_url = supabase.storage.from_('userprofile').get_public_url(file_path)
+        request.user.userprofile.profile_pic_url = public_url
+        request.user.userprofile.save(update_fields=['profile_pic_url'])
+
 @login_required(login_url='login')
 def edit_profile(request): # this function is for editing user profile
     userprofile = get_object_or_404(UserProfile, user=request.user)
@@ -228,6 +249,7 @@ def edit_profile(request): # this function is for editing user profile
         user_form = UserForm(request.POST, instance=request.user)
         profile_form = UserProfileForm(request.POST, request.FILES, instance=userprofile)
         if user_form.is_valid() and profile_form.is_valid():
+            save(request)
             user_form.save()
             profile_form.save()
             messages.success(request, 'Your profile has been updated.')
