@@ -209,7 +209,7 @@ SUPABASE_KEY = config('SUPABASE_KEY')
 SUPABASE_CLIENT = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
-SITE_ID = 1
+SITE_ID = 2 # for https://greatkart-1rr3.onrender.com/
 
 # Allauth Configuration
 LOGIN_REDIRECT_URL = '/dashboard/' # Redirect to dashboard after login
