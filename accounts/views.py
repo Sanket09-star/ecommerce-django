@@ -7,7 +7,6 @@ from accounts.forms import RegistrationForm, UserForm, UserProfileForm
 from accounts.models import Account, UserProfile
 
 #Verification by email
-from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
@@ -36,18 +35,17 @@ def register(request):
             user.save()
 
             # USER ACTIVATION by email
-            current_site = get_current_site(request)
             mail_subject = 'Please activate your account'
             message = render_to_string('accounts/account_verification_email.html', {
                 'user': user,
-                'domain': current_site,
+                'domain': 'localhost:8000',
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)), # encoding the user id
                 'token': default_token_generator.make_token(user), # generating token for user activation
             })
             to_email = email
             send_email = EmailMessage(mail_subject, message, to=[to_email])
             send_email.send()
-            #messages.success(request, 'Thank you for registering with us. We have sent you a verification email to your email address. Please verify to activate your account.')
+            messages.success(request, 'Thank you for registering with us. We have sent you a verification email to your email address. Please verify to activate your account.')
             return redirect('/accounts/login/?command=verification&email='+email)# redirecting to login page with a message to verify email
 
     else: 
@@ -118,11 +116,7 @@ def login(request):
             except:
                 return redirect('dashboard')
         else:
-            # The 'command' check is for the now-removed email verification flow.
-            if 'command' in request.GET and request.GET['command'] == 'verification':
-                 messages.success(request, 'Thank you for registering with us. We have sent you a verification email to your email address. Please verify to activate your account.')
-            else:
-                messages.error(request, 'Invalid login credentials')
+            messages.error(request, 'Invalid login credentials')
             return redirect('login')
     return render(request, 'accounts/login.html')
 
@@ -165,11 +159,10 @@ def forgotPassword(request):
         if Account.objects.filter(email=email).exists():
             user = Account.objects.get(email__exact=email)# exact match of email exact is case sensitive and iexat is case insensitive
             # Reset password email
-            current_site = get_current_site(request)
             mail_subject = 'Reset your password'
             message = render_to_string('accounts/reset_password_email.html', {
                 'user': user,
-                'domain': current_site,
+                'domain': 'localhost:8000',
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': default_token_generator.make_token(user), 
             })
@@ -241,6 +234,9 @@ def edit_profile(request): # this function is for editing user profile
                 uploaded_file = request.FILES['profile_picture']
                 # Define a unique path for the file in Supabase storage
                 file_path = f"userprofile/{request.user.id}/{uploaded_file.name}"
+                
+                # Reset file pointer and read content before upload
+                uploaded_file.seek(0)
                 
                 # Upload the file content directly
                 settings.SUPABASE_CLIENT.storage.from_('userprofile').upload(file=uploaded_file.read(), path=file_path, file_options={'content-type': uploaded_file.content_type, 'upsert': 'true'})
