@@ -5,7 +5,7 @@ from django.conf import settings # Import settings to access SUPABASE_CLIENT
 from django.contrib.auth.decorators import login_required
 from accounts.forms import RegistrationForm, UserForm, UserProfileForm
 from accounts.models import Account, UserProfile
-
+from django.contrib.sites.models import Site
 #Verification by email
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -35,10 +35,12 @@ def register(request):
             user.save()
 
             # USER ACTIVATION by email
+            current_site = Site.objects.get_current(request)
+            domain = current_site.domain
             mail_subject = 'Please activate your account'
             message = render_to_string('accounts/account_verification_email.html', {
                 'user': user,
-                'domain': 'localhost:8000',
+                'domain': domain,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)), # encoding the user id
                 'token': default_token_generator.make_token(user), # generating token for user activation
             })
@@ -157,12 +159,15 @@ def forgotPassword(request):
     if request.method == 'POST':
         email = request.POST['email']
         if Account.objects.filter(email=email).exists():
+            #domain = 'localhost:8000'
+            current_site = Site.objects.get_current(request)
+            domain = current_site.domain
             user = Account.objects.get(email__exact=email)# exact match of email exact is case sensitive and iexat is case insensitive
             # Reset password email
             mail_subject = 'Reset your password'
             message = render_to_string('accounts/reset_password_email.html', {
                 'user': user,
-                'domain': 'localhost:8000',
+                'domain': domain,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': default_token_generator.make_token(user), 
             })

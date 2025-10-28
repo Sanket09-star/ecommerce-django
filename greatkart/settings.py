@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'django_session_timeout',
     'category',
     'accounts',
     'store',
@@ -54,7 +56,6 @@ INSTALLED_APPS = [
     #'admin_honeypot', to user admin_honeypot need django version 2 or 3 , new version of django 5.2.5 not support admin_honeypot
 
     # Allauth
-    'django.contrib.sites',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -71,6 +72,7 @@ MIDDLEWARE = [
     'allauth.account.middleware.AccountMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django_session_timeout.middleware.SessionTimeoutMiddleware', # Session timeout middleware
+    'django.contrib.sites.middleware.CurrentSiteMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
