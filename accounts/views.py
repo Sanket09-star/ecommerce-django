@@ -32,24 +32,24 @@ def register(request):
             
             user = Account.objects.create_user(first_name=first_name, last_name=last_name, email=email,  username=username, password=password)
             user.phone_number = phone_number
-            # user.is_active = True
+            user.is_active = True
             user.save()
 
             # Activation email
-            current_site = Site.objects.get_current(request)
-            domain = current_site.domain
-            mail_subject = 'Please activate your account'
-            message = render_to_string('accounts/account_verification_email.html', {
-                'user': user,
-                'domain': domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': default_token_generator.make_token(user),
-            })
-            to_email = email
-            send_email = EmailMessage(mail_subject, message, to=[to_email])
-            send_email.send()
+            # current_site = Site.objects.get_current(request)
+            # domain = current_site.domain
+            # mail_subject = 'Please activate your account'
+            # message = render_to_string('accounts/account_verification_email.html', {
+            #     'user': user,
+            #     'domain': domain,
+            #     'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+            #     'token': default_token_generator.make_token(user),
+            # })
+            # to_email = email
+            # send_email = EmailMessage(mail_subject, message, to=[to_email])
+            # send_email.send()
             
-            messages.success(request, 'Registration successful. Please check your email to activate your account.')
+            messages.success(request, 'Registration successful. You can now log in.')
             return redirect('login')
 
     else: 
