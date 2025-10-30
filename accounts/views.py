@@ -23,7 +23,7 @@ def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            first_name = form.cleaned_data['first_name'].strip()# this removes any extra spaces from the first name
+            first_name = form.cleaned_data['first_name'].strip()
             last_name = form.cleaned_data['last_name'].strip()
             email = form.cleaned_data['email'].strip()
             phone_number = form.cleaned_data['phone_number'].strip()
@@ -32,23 +32,25 @@ def register(request):
             
             user = Account.objects.create_user(first_name=first_name, last_name=last_name, email=email,  username=username, password=password)
             user.phone_number = phone_number
+            # user.is_active = True
             user.save()
 
-            # USER ACTIVATION by email
+            # Activation email
             current_site = Site.objects.get_current(request)
             domain = current_site.domain
             mail_subject = 'Please activate your account'
             message = render_to_string('accounts/account_verification_email.html', {
                 'user': user,
                 'domain': domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)), # encoding the user id
-                'token': default_token_generator.make_token(user), # generating token for user activation
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': default_token_generator.make_token(user),
             })
             to_email = email
             send_email = EmailMessage(mail_subject, message, to=[to_email])
             send_email.send()
-            messages.success(request, 'Thank you for registering with us. We have sent you a verification email to your email address. Please verify to activate your account.')
-            return redirect('/accounts/login/?command=verification&email='+email)# redirecting to login page with a message to verify email
+            
+            messages.success(request, 'Registration successful. Please check your email to activate your account.')
+            return redirect('login')
 
     else: 
         form = RegistrationForm() 
