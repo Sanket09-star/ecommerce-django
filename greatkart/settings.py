@@ -47,7 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'django_session_timeout',
+    #'django_session_timeout',
     'category',
     'accounts',
     'store',
@@ -71,7 +71,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'allauth.account.middleware.AccountMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_session_timeout.middleware.SessionTimeoutMiddleware', # Session timeout middleware
+    #'django_session_timeout.middleware.SessionTimeoutMiddleware', # Session timeout middleware
     'django.contrib.sites.middleware.CurrentSiteMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
